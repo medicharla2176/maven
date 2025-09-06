@@ -1,0 +1,27 @@
+node('built-in')
+{
+    stage('continuousDownload')
+    {
+        git 'https://github.com/medicharla2176/maven.git'
+    }
+    stage('ContinuousBuild')
+    {
+        sh 'mvn package'
+    }
+    stage('continousDeployment')
+    {
+        deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: '094aac50-e40f-4811-b5f5-1e2e17963fd4', path: '', url: 'http://192.168.17.51:8080')], contextPath: 'testapp', war: '**/*.war'
+    }
+    stage('Continoustesting')
+    {
+        git 'https://github.com/medicharla2176/FunctionalTesting.git'
+        sh 'java -jar "/var/lib/jenkins/workspace/pipeline dev/testing.jar"'
+    }
+    stage('ContinousDelivery')
+    {
+        //  input message: 'permission to manager ', submitter: 'sai1'
+        deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: '094aac50-e40f-4811-b5f5-1e2e17963fd4', path: '', url: 'http://192.168.26.96:8080')], contextPath: 'tejapip', war: '**/*.war'
+       
+
+    }
+}
